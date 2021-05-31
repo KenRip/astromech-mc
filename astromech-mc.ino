@@ -1,5 +1,5 @@
 // =======================================================================================
-//       Sketch: SyRenSabertoothToBTS7960MotorController
+//       Sketch: astromech-mc (Astromech Motor Controller)
 //       Author: Kenneth Ripple (KenRip on Astromech.net)
 //         Date: May 31 2021
 // =======================================================================================
