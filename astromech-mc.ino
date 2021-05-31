@@ -1,6 +1,26 @@
+// =======================================================================================
 //       Sketch: SyRenSabertoothToBTS7960MotorController
 //       Author: Kenneth Ripple (KenRip on Astromech.net)
 //         Date: May 31 2021
+// =======================================================================================
+//
+//         This program is free software: you can redistribute it and/or modify it for
+//         your personal use and the personal use of other astromech club members.  
+//
+//         This program is distributed in the hope that it will be useful 
+//         as a courtesy to fellow astromech club members wanting to develop
+//         their own droid control system.
+//
+//         IT IS OFFERED WITHOUT ANY WARRANTY; without even the implied warranty of
+//         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+//
+//         You are using this software at your own risk and, as a fellow club member, it is
+//         expected you will have the proper experience / background to handle and manage that 
+//         risk appropriately.  It is completely up to you to insure the safe operation of
+//         your droid and to validate and test all aspects of your droid control system.
+//
+// =======================================================================================
+//
 //  Description: This sketch is designed to emulate the Dimension Engineering SyRen 10 and Sabertooth 2x32 motor
 //               controllers.  It is designed for an Arduino Uno (or compatible) with at least 6 pins capable for 
 //               PWM.  It utilizes three inexpensive BTS7960 motor controllers each theoretically capable of 43A 12VDC 
@@ -18,6 +38,8 @@
 //               US price for three (3) was $18.39.
 //               Other compatible units can be found on Amazon or on AliExpress...
 //               https://www.aliexpress.com/wholesale?SearchText=BTS7960
+//
+// =======================================================================================
 
 //#define SERIAL_DEBUG    // Uncomment to display Serial debugging messages
 // Note: Serial debugging significantly degrades the actual serial communications between the SHADOW/Padawn Arduino Mega
