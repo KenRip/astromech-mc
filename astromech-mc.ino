@@ -42,6 +42,7 @@
 // =======================================================================================
 
 //#define SERIAL_DEBUG    // Uncomment to display Serial debugging messages
+
 // Note: Serial debugging significantly degrades the actual serial communications between the SHADOW/Padawn Arduino Mega
 //       and this controller.  You should compile your final version of this sketch with SERIAL_DEBUG commented out to
 //       avoid this performance impact.
@@ -184,44 +185,62 @@ void loop() {
                 CMD = serialdata[d + i];
               }
               if (serialdata[d + i] == setdeadband) {
-                Serial.println("  setDeadband Cmd");
+                #ifdef SERIAL_DEBUG 
+                  Serial.println("  setDeadband Cmd");
+                #endif
                 CMD = serialdata[d + i];
               }
               if (serialdata[d + i] == motor1forward) {
-                Serial.println("  motor1forward Cmd");
+                #ifdef SERIAL_DEBUG
+                  Serial.println("  motor1forward Cmd");
+                #endif
                 CMD = serialdata[d + i];
                 isSTMotorsStopped = false;
               }
               if (serialdata[d + i] == motor1reverse) {
-                Serial.println("  motor1reverse Cmd");
+                #ifdef SERIAL_DEBUG
+                  Serial.println("  motor1reverse Cmd");
+                #endif 
                 CMD = serialdata[d + i];
                 isSTMotorsStopped = false;
               }
               if (serialdata[d + i] == motor2forward) {
-                Serial.println("  motor2forward Cmd");
+                #ifdef SERIAL_DEBUG
+                  Serial.println("  motor2forward Cmd");
+                #endif
                 CMD = serialdata[d + i];
                 isSTMotorsStopped = false;
               }
               if (serialdata[d + i] == motor2reverse) {
-                Serial.println("  motor2reverse Cmd");
+                #ifdef SERIAL_DEBUG
+                  Serial.println("  motor2reverse Cmd");
+                #endif
                 CMD = serialdata[d + i];
                 isSTMotorsStopped = false;
               }
               if (serialdata[d + i] == turnleft) {
-                Serial.println("  turnleft Cmd");
+                #ifdef SERIAL_DEBUG
+                  Serial.println("  turnleft Cmd");
+                #endif
                 CMD = serialdata[d + i];
               }
               if (serialdata[d + i] == driveforward) {
-                Serial.println("  driveforward Cmd");
+                #ifdef SERIAL_DEBUG
+                  Serial.println("  driveforward Cmd");
+                #endif
                 CMD = serialdata[d + i];
                 isSTMotorsStopped = false;
               }
               if (serialdata[d + i] == turnright) {
-                Serial.println("  turnright Cmd");
+                #ifdef SERIAL_DEBUG
+                  Serial.println("  turnright Cmd");
+                #endif
                 CMD = serialdata[d + i];
               }
               if (serialdata[d + i] == drivereverse) {
-                Serial.println("  drivereverse Cmd");
+                #ifdef SERIAL_DEBUG
+                  Serial.println("  drivereverse Cmd");
+                #endif
                 CMD = serialdata[d + i];
                 isSTMotorsStopped = false;
               }
