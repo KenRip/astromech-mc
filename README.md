@@ -1,5 +1,5 @@
 # astromech-mc
-      Sketch: astromech-mc
+      Sketch: astromech-mc (the Astromech Motor Controller)
       Author: Kenneth Ripple (KenRip on Astromech.net)
         Date: May 31 2021
 Description: 
