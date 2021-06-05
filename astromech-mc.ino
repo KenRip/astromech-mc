@@ -55,6 +55,7 @@ int turnleftVal;
 int turnrightVal;
 int driveleftVal;
 int driverightVal;
+String output = "";
 
 // Serial Communications values for receiving SyRen and Sabertooth Packet Serial Commands
 uint8_t serialdata[64]; // Initialized variable to store recieved data
@@ -117,8 +118,9 @@ int Dome_L_PWM = 11;
 void setup() {
   Serial.begin(9600);
   timeout = 0;
+  output.reserve(200); // Reserve 200 bytes for the output string
 #ifdef SERIAL_DEBUG
-  Serial.println("Setup BTS7960 Output Pins");
+  output += "Setup BTS7960 Output Pins\r\n";
 #endif
 
   // Setup BTS7960 output pins (RightFoot)
@@ -165,8 +167,9 @@ void loop() {
     timeout = 0; // Reset timeout counter after reading bytes
     for (d = 0; d < datareceived; d++) {
       #ifdef SERIAL_DEBUG
-        Serial.print("Addr: ");
+        output += "Addr: ";
         printHex(serialdata[d]);
+        output += "\r\n";
       #endif
       switch (serialdata[d]) {
 
@@ -175,71 +178,72 @@ void loop() {
           for (i = 1; i < 4; i++) {
             if (i == 1) {
               #ifdef SERIAL_DEBUG
-                Serial.print("ST Cmd: ");
+                output += "ST Cmd: ";
                 printHex(serialdata[d + i]);
+                output += "\r\n";
               #endif
               if (serialdata[d + i] == settimeout) {
                 #ifdef SERIAL_DEBUG
-                  Serial.println("  setTimeout Cmd");
+                  output += "  setTimeout Cmd\r\n";
                 #endif
                 CMD = serialdata[d + i];
               }
               if (serialdata[d + i] == setdeadband) {
                 #ifdef SERIAL_DEBUG 
-                  Serial.println("  setDeadband Cmd");
+                  output += "  setDeadband Cmd\r\n";
                 #endif
                 CMD = serialdata[d + i];
               }
               if (serialdata[d + i] == motor1forward) {
                 #ifdef SERIAL_DEBUG
-                  Serial.println("  motor1forward Cmd");
+                  output += "  motor1forward Cmd\r\n";
                 #endif
                 CMD = serialdata[d + i];
                 isSTMotorsStopped = false;
               }
               if (serialdata[d + i] == motor1reverse) {
                 #ifdef SERIAL_DEBUG
-                  Serial.println("  motor1reverse Cmd");
+                  output += "  motor1reverse Cmd\r\n";
                 #endif 
                 CMD = serialdata[d + i];
                 isSTMotorsStopped = false;
               }
               if (serialdata[d + i] == motor2forward) {
                 #ifdef SERIAL_DEBUG
-                  Serial.println("  motor2forward Cmd");
+                  output += "  motor2forward Cmd\r\n";
                 #endif
                 CMD = serialdata[d + i];
                 isSTMotorsStopped = false;
               }
               if (serialdata[d + i] == motor2reverse) {
                 #ifdef SERIAL_DEBUG
-                  Serial.println("  motor2reverse Cmd");
+                  output += "  motor2reverse Cmd\r\n";
                 #endif
                 CMD = serialdata[d + i];
                 isSTMotorsStopped = false;
               }
               if (serialdata[d + i] == turnleft) {
                 #ifdef SERIAL_DEBUG
-                  Serial.println("  turnleft Cmd");
+                  output += "  turnleft Cmd\r\n";
                 #endif
                 CMD = serialdata[d + i];
               }
               if (serialdata[d + i] == driveforward) {
                 #ifdef SERIAL_DEBUG
-                  Serial.println("  driveforward Cmd");
+                  output += "  driveforward Cmd\r\n";
                 #endif
                 CMD = serialdata[d + i];
                 isSTMotorsStopped = false;
               }
               if (serialdata[d + i] == turnright) {
                 #ifdef SERIAL_DEBUG
-                  Serial.println("  turnright Cmd");
+                  output += "  turnright Cmd\r\n";
                 #endif
                 CMD = serialdata[d + i];
               }
               if (serialdata[d + i] == drivereverse) {
                 #ifdef SERIAL_DEBUG
-                  Serial.println("  drivereverse Cmd");
+                  output += "  drivereverse Cmd\r\n";
                 #endif
                 CMD = serialdata[d + i];
                 isSTMotorsStopped = false;
@@ -247,118 +251,132 @@ void loop() {
             }
             if (i == 2) {
               #ifdef SERIAL_DEBUG
-                Serial.print("  Val: ");
+                output += "  Val: ";
                 printHex(serialdata[d + i]);
+                output += "\r\n";
               #endif
               VAL = serialdata[d + i];
             }
             if (i == 3) {
               #ifdef SERIAL_DEBUG
-                Serial.print("  ChkSum: ");
+                output += "  ChkSum: ";
                 printHex(serialdata[d + i]);
+                output += "\r\n";
               #endif
               // Check of ChkSum here before executing movement commands
               ChkSum = ((addr128 + CMD + VAL) & B01111111);
               #ifdef SERIAL_DEBUG
-                Serial.print("  Calc ChkSum: ");
+                output += "  Calc ChkSum: ";
                 printHex(ChkSum);
+                output += "\r\n";
               #endif
               if (serialdata[d + i] == ChkSum) {
                 if (CMD == motor1forward) {
                   #ifdef SERIAL_DEBUG
-                    Serial.println("  RightFoot Clockwise");
-                    Serial.print("    RightFoot_R_PWM: ");
+                    output += "  RightFoot Clockwise\r\n";
+                    output += "    RightFoot_R_PWM: ";
                     printHex(VAL);
-                    Serial.println("    RightFoot_L_PWM: 00");
+                    output += "\r\n";
+                    output += "    RightFoot_L_PWM: 00\r\n";
                   #endif
                   analogWrite(RightFoot_R_PWM, VAL);
                   analogWrite(RightFoot_L_PWM, 0);
                   if (VAL == 0) {
                     #ifdef SERIAL_DEBUG
-                      Serial.println("  RightFoot Stopped");
+                      output += "  RightFoot Stopped\r\n";
                     #endif
                   }
                 }
                 if (CMD == motor1reverse) {
                   #ifdef SERIAL_DEBUG
-                    Serial.println("  RightFoot Counter-Clockwise");
-                    Serial.println("    RightFoot_R_PWM: 00");
-                    Serial.print("    RightFoot_L_PWM: ");
+                    output += "  RightFoot Counter-Clockwise\r\n";
+                    output += "    RightFoot_R_PWM: 00\r\n";
+                    output += "    RightFoot_L_PWM: ";
                     printHex(VAL);
+                    output += "\r\n";
                   #endif
                   analogWrite(RightFoot_R_PWM, 0);
                   analogWrite(RightFoot_L_PWM, VAL);
                   if (VAL == 0) {
                     #ifdef SERIAL_DEBUG
-                      Serial.println("  RightFoot Stopped");
+                      output += "  RightFoot Stopped\r\n";
                     #endif
                   }
                 }
                 if (CMD == motor2forward) {
                   #ifdef SERIAL_DEBUG
-                    Serial.println("  LeftFoot Clockwise");
-                    Serial.print("    LeftFoot_R_PWM: ");
+                    output += "  LeftFoot Clockwise\r\n";
+                    output += "    LeftFoot_R_PWM: ";
                     printHex(VAL);
-                    Serial.println("    LeftFoot_L_PWM: 00");
+                    output += "\r\n";
+                    output += "    LeftFoot_L_PWM: 00\r\n";
                   #endif
                   analogWrite(LeftFoot_R_PWM, VAL);
                   analogWrite(LeftFoot_L_PWM, 0);
                   if (VAL == 0) {
                     #ifdef SERIAL_DEBUG
-                      Serial.println("  LeftFoot Stopped");
+                      output += "  LeftFoot Stopped\r\n";
                     #endif
                   }
                 }
                 if (CMD == motor2reverse) {
                   #ifdef SERIAL_DEBUG
-                    Serial.println("  LeftFoot Counter-Clockwise");
-                    Serial.println("    LeftFoot_R_PWM: 00");
-                    Serial.print("    LeftFoot_L_PWM: ");
+                    output += "  LeftFoot Counter-Clockwise\r\n";
+                    output += "    LeftFoot_R_PWM: 00\r\n";
+                    output += "    LeftFoot_L_PWM: ";
                     printHex(VAL);
+                    output += "\r\n";
                   #endif
                   analogWrite(LeftFoot_R_PWM, 0);
                   analogWrite(LeftFoot_L_PWM, VAL);
                   if (VAL == 0) {
                     #ifdef SERIAL_DEBUG
-                      Serial.println("  LeftFoot Stopped");
+                      output += "  LeftFoot Stopped\r\n";
                     #endif
                   }
                 }
                 if (CMD == turnleft) {
                   #ifdef SERIAL_DEBUG
-                    Serial.println("  Saving turnleft Value");
-                    Serial.print("    Turnleft VAL: ");
+                    output += "  Saving turnleft Value\r\n";
+                    output += "    Turnleft VAL: ";
                     printHex(VAL);
+                    output += "\r\n";
                   #endif
                   turnleftVal = VAL;
                   turnrightVal = 0;
                 }
                 if (CMD == turnright) {
                   #ifdef SERIAL_DEBUG
-                    Serial.println("  Saving turnright Value");
-                    Serial.print("    Turnright VAL: ");
+                    output += "  Saving turnright Value\r\n";
+                    output += "    Turnright VAL: ";
                     printHex(VAL);
+                    output += "\r\n";
                   #endif
                   turnrightVal = VAL;
                   turnleftVal = 0;
                 }
                 if (CMD == driveforward) {
                   #ifdef SERIAL_DEBUG
-                    Serial.println("  DriveForward Movement");
-                    Serial.print("    DriveForward VAL: ");
+                    output += "  DriveForward Movement\r\n";
+                    output += "    DriveForward VAL: ";
                     printHex(VAL);
-                    Serial.print("    Turnright VAL: ");
+                    output += "\r\n";
+                    output += "    Turnright VAL: ";
                     printHex(turnrightVal);
-                    Serial.print("    Turnleft VAL: ");
+                    output += "\r\n";
+                    output += "    Turnleft VAL: ";
                     printHex(turnleftVal);
+                    output += "\r\n";
                   #endif
                   driverightVal = VAL + turnleftVal;
                   driveleftVal = VAL + turnrightVal;
                   #ifdef SERIAL_DEBUG
-                    Serial.print("    RightFoot DriveForward VAL: ");
+                    output += "    RightFoot DriveForward VAL: ";
                     printHex(driverightVal);
-                    Serial.print("    LeftFoot DriveForward VAL: ");
+                    output += "\r\n";
+                    output += "    LeftFoot DriveForward VAL: ";
                     printHex(driveleftVal);
+                    output += "\r\n";
                   #endif
                   analogWrite(RightFoot_R_PWM, VAL);
                   analogWrite(RightFoot_L_PWM, 0);
@@ -367,21 +385,26 @@ void loop() {
                 }
                 if (CMD == drivereverse) {
                   #ifdef SERIAL_DEBUG
-                    Serial.println("  DriveReverse Movement");
-                    Serial.print("    DriveReverse VAL: ");
+                    output += "  DriveReverse Movement\r\n";
+                    output += "    DriveReverse VAL: ";
                     printHex(VAL);
-                    Serial.print("    Turnright VAL: ");
+                    output += "\r\n";
+                    output += "    Turnright VAL: ";
                     printHex(turnrightVal);
-                    Serial.print("    Turnleft VAL: ");
+                    output += "\r\n";
+                    output += "    Turnleft VAL: ";
                     printHex(turnleftVal);
+                    output += "\r\n";
                   #endif
                   driverightVal = VAL + turnleftVal;
                   driveleftVal = VAL + turnrightVal;
                   #ifdef SERIAL_DEBUG
-                    Serial.print("    RightFoot DriveReverse VAL: ");
+                    output += "    RightFoot DriveReverse VAL: ";
                     printHex(driverightVal);
-                    Serial.print("    LedftFoot DriveReverse VAL: ");
+                    output += "\r\n";
+                    output += "    LedftFoot DriveReverse VAL: ";
                     printHex(driveleftVal);
+                    output += "\r\n";
                   #endif
                   analogWrite(RightFoot_R_PWM, 0);
                   analogWrite(RightFoot_L_PWM, VAL);
@@ -391,7 +414,7 @@ void loop() {
               }
               else {
                 #ifdef SERIAL_DEBUG
-                  Serial.println("  ChkSum Error/Cmd Ignored");
+                  output += "  ChkSum Error/Cmd Ignored\r\n";
                 #endif
               }
             }
@@ -404,31 +427,32 @@ void loop() {
           for (i = 1; i < 4; i++) {
             if (i == 1) {
               #ifdef SERIAL_DEBUG
-                Serial.print("SyRen Cmd: ");
+                output += "SyRen Cmd: ";
                 printHex(serialdata[d + i]);
+                output += "\r\n";
               #endif
               if (serialdata[d + i] == settimeout) {
                 #ifdef SERIAL_DEBUG
-                  Serial.println("  setTimeout Cmd");
+                  output += "  setTimeout Cmd\r\n";
                 #endif
                 CMD = serialdata[d + i];
               }
               if (serialdata[d + i] == setdeadband) {
                 #ifdef SERIAL_DEBUG
-                  Serial.println("  setDeadband Cmd");
+                  output += "  setDeadband Cmd\r\n";
                 #endif
                 CMD = serialdata[d + i];
               }
               if (serialdata[d + i] == motor1forward) {
                 #ifdef SERIAL_DEBUG
-                  Serial.println("  motor1forward Cmd");
+                  output += "  motor1forward Cmd\r\n";
                 #endif
                 CMD = serialdata[d + i];
                 isSyRMotorStopped = false;
               }
               if (serialdata[d + i] == motor1reverse) {
                 #ifdef SERIAL_DEBUG
-                  Serial.println("  motor1reverse Cmd");
+                  output += "  motor1reverse Cmd\r\n";
                 #endif
                 CMD = serialdata[d + i];
                 isSyRMotorStopped = false;
@@ -437,14 +461,14 @@ void loop() {
               //       generates motor2 commands when the SyR->stop command is issued.
               if (serialdata[d + i] == motor2forward) {
                 #ifdef SERIAL_DEBUG
-                  Serial.println("  motor2forward Cmd");
+                  output += "  motor2forward Cmd\r\n";
                 #endif
                 CMD = serialdata[d + i];
                 isSyRMotorStopped = false;
               }
               if (serialdata[d + i] == motor2reverse) {
                 #ifdef SERIAL_DEBUG
-                  Serial.println("  motor2reverse Cmd");
+                  output += "  motor2reverse Cmd\r\n";
                 #endif
                 CMD = serialdata[d + i];
                 isSyRMotorStopped = false;
@@ -452,67 +476,70 @@ void loop() {
             }
             if (i == 2) {
               #ifdef SERIAL_DEBUG
-                Serial.print("  Val: ");
+                output += "  Val: ";
                 printHex(serialdata[d + i]);
+                output += "\r\n";
               #endif
               VAL = serialdata[d + i];
             }
             if (i == 3) {
               #ifdef SERIAL_DEBUG
-                Serial.print("  ChkSum: ");
+                output += "  ChkSum: ";
                 printHex(serialdata[d + i]);
+                output += "\r\n";
               #endif
               // Check of ChkSum here before executing movement commands
               ChkSum = ((addr129 + CMD + VAL) & B01111111);
               #ifdef SERIAL_DEBUG
-                Serial.print("  Calc ChkSum: ");
+                output += "  Calc ChkSum: ";
                 printHex(ChkSum);
+                output += "\r\n";
               #endif
               if (serialdata[d + i] == ChkSum) {
                 if (CMD == motor1forward) {
                   #ifdef SERIAL_DEBUG
-                    Serial.println("  Dome Clockwise");
+                    output += "  Dome Clockwise\r\n";
                   #endif
                   analogWrite(Dome_R_PWM, VAL);
                   analogWrite(Dome_L_PWM, 0);
                   if (VAL == 0) {
                     #ifdef SERIAL_DEBUG
-                      Serial.println("  Dome Stopped");
+                      output += "  Dome Stopped\r\n";
                     #endif
                     isSyRMotorStopped = true;
                   }
                 }
                 if (CMD == motor1reverse) {
                   #ifdef SERIAL_DEBUG
-                    Serial.println("  Dome Counter-Clockwise");
+                    output += "  Dome Counter-Clockwise\r\n";
                   #endif
                   analogWrite(Dome_R_PWM, 0);
                   analogWrite(Dome_L_PWM, VAL);
                   if (VAL == 0) {
                     #ifdef SERIAL_DEBUG
-                      Serial.println("  Dome Stopped");
+                      output += "  Dome Stopped\r\n";
                     #endif
                     isSyRMotorStopped = true;
                   }
                 }
                 if (CMD == motor2forward) {
                   #ifdef SERIAL_DEBUG
-                    Serial.println("  motor2forward Cmd");
+                    output += "  motor2forward Cmd\r\n";
                   #endif
                   if (VAL == 0) {
                     #ifdef SERIAL_DEBUG
-                      Serial.println("  Dome Stopped");
+                      output += "  Dome Stopped\r\n";
                     #endif
                     isSyRMotorStopped = true;
                   }
                 }
                 if (CMD == motor2reverse) {
                   #ifdef SERIAL_DEBUG
-                    Serial.println("  motor2reverse Cmd");
+                    output += "  motor2reverse Cmd\r\n";
                   #endif
                   if (VAL == 0) {
                     #ifdef SERIAL_DEBUG
-                      Serial.println("  Dome Stopped");
+                      output += "  Dome Stopped\r\n";
                     #endif
                     isSyRMotorStopped = true;
                   }
@@ -520,7 +547,7 @@ void loop() {
               }
               else {
                 #ifdef SERIAL_DEBUG
-                  Serial.println("  ChkSum Error/Cmd Ignored");
+                  output += "  ChkSum Error/Cmd Ignored\r\n";
                 #endif
               }
             }
@@ -529,7 +556,7 @@ void loop() {
           break;
         case autobaud:
           #ifdef SERIAL_DEBUG
-            Serial.println("ST/SyRen Autobaud Cmd");
+            output += "ST/SyRen Autobaud Cmd\r\n";
           #endif
           break;
         default:
@@ -542,11 +569,11 @@ void loop() {
     if (timeout >= serialtimeout) {
       if (isSTMotorsStopped == false) {
         #ifdef SERIAL_DEBUG
-          Serial.println("ST: Serial timeout - motors stopped");
-          Serial.println("    LeftFoot_R_PWM: 00");
-          Serial.println("    LeftFoot_L_PWM: 00");
-          Serial.println("    RightFoot_R_PWM: 00");
-          Serial.println("    RightFoot_L_PWM: 00");
+          output += "ST: Serial timeout - motors stopped\r\n";
+          output += "    LeftFoot_R_PWM: 00\r\n";
+          output += "    LeftFoot_L_PWM: 00\r\n";
+          output += "    RightFoot_R_PWM: 00\r\n";
+          output += "    RightFoot_L_PWM: 00\r\n";
         #endif
         isSTMotorsStopped = true;
         analogWrite(LeftFoot_R_PWM, 0);
@@ -556,9 +583,9 @@ void loop() {
       }
       if (isSyRMotorStopped == false) {
         #ifdef SERIAL_DEBUG
-          Serial.println("SyRen: Serial timeout - motor stopped");
-          Serial.println("    Dome_R_PWM: 00");
-          Serial.println("    Dome_L_PWM: 00");
+          output += "SyRen: Serial timeout - motor stopped\r\n";
+          output += "    Dome_R_PWM: 00\r\n";
+          output += "    Dome_L_PWM: 00\r\n";
         #endif
         isSyRMotorStopped = true;
         analogWrite(Dome_R_PWM, 0);
@@ -567,12 +594,29 @@ void loop() {
       timeout = 0;
     }
   }
+  printOutput();
   delay(loopdelay);
 }
 
-// Routine for printing single byte values in Hex to Serial for debugging
+// =======================================================================================
+// Routine for outputing single byte values in Hex to Serial for debugging
+// =======================================================================================
+
 void printHex(uint8_t num) {
   char hexCar[2];
   sprintf(hexCar, "%02X", num);
-  Serial.println(hexCar);
+  output += hexCar;
+}
+
+// =======================================================================================
+//          Print Output Function
+// =======================================================================================
+
+void printOutput()
+{
+    if (output != "")
+    {
+        if (Serial) Serial.println(output);
+        output = ""; // Reset output string
+    }
 }
