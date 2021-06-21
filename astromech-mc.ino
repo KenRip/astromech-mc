@@ -380,8 +380,8 @@ void loop() {
                   #endif
                   analogWrite(RightFoot_R_PWM, VAL);
                   analogWrite(RightFoot_L_PWM, 0);
-                  analogWrite(LeftFoot_R_PWM, VAL);
-                  analogWrite(LeftFoot_L_PWM, 0);
+                  analogWrite(LeftFoot_R_PWM, 0);
+                  analogWrite(LeftFoot_L_PWM, VAL);
                 }
                 if (CMD == drivereverse) {
                   #ifdef SERIAL_DEBUG
@@ -408,8 +408,8 @@ void loop() {
                   #endif
                   analogWrite(RightFoot_R_PWM, 0);
                   analogWrite(RightFoot_L_PWM, VAL);
-                  analogWrite(LeftFoot_R_PWM, 0);
-                  analogWrite(LeftFoot_L_PWM, VAL);
+                  analogWrite(LeftFoot_R_PWM, VAL);
+                  analogWrite(LeftFoot_L_PWM, 0);
                 }
               }
               else {
